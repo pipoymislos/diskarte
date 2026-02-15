@@ -6,8 +6,6 @@ __pycache__/
 *.log
 *.pot
 *.pyc
-*.db
-*.sqlite3
 venv/
 env/
 ENV/
@@ -15,9 +13,7 @@ ENV/
 .env
 
 # Django
-*.log
-local_settings.py
-db.sqlite3
+*.sqlite3
 media/
 staticfiles/
 static/
@@ -29,8 +25,3 @@ static/
 *.swo
 *~
 .DS_Store
-
-# Project specific
-*.sqlite3
-__pycache__/
-*.pyc
