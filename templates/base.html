@@ -1,10 +1,9 @@
- 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diskarte Pinoy TV - {% block title %}Inventory System{% endblock %}</title>
+    <title>Diskarteng Pinoy TV - {% block title %}Inventory System{% endblock %}</title>
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -13,121 +12,1076 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght:300;400;500;600;700;800;900&family=Roboto:wght:300;400;500;700&display=swap" rel="stylesheet">
     
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     
-    <!-- Custom CSS -->
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        /* ==================== DISKARTENG PINOY TV THEME ==================== */
+        /* Green, Brown, White Color Scheme */
+        :root {
+            --primary-green: #2D5A27;
+            --primary-green-dark: #1D3A19;
+            --primary-green-light: #4A7B43;
+            --primary-brown: #8B6B4D;
+            --primary-brown-dark: #5A4530;
+            --primary-brown-light: #B59273;
+            --accent-white: #FFFFFF;
+            --accent-offwhite: #F5F5F0;
+            --accent-cream: #F3EFE5;
+            --accent-beige: #E8E0D5;
+            --text-dark: #2D3E2A;
+            --text-brown: #5A4530;
+            --text-light: #F5F5F0;
+            --text-muted: #7A6A5A;
+            --sidebar-width: 280px;
+            --sidebar-collapsed-width: 70px;
+            --border-radius: 8px;
+            --border-radius-lg: 16px;
+            --box-shadow: 0 8px 25px rgba(45, 90, 39, 0.1);
+            --box-shadow-hover: 0 12px 30px rgba(139, 107, 77, 0.15);
+            --transition: all 0.3s ease;
+            --font-primary: 'Montserrat', sans-serif;
+            --font-secondary: 'Roboto', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background-color: var(--accent-beige);
+            color: var(--text-dark);
+            min-height: 100vh;
+        }
+
+        /* Wrapper */
+        .wrapper {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        /* ==================== SIDEBAR STYLES ==================== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary-green) 0%, var(--primary-green-dark) 100%);
+            color: var(--accent-white);
+            transition: var(--transition);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.15);
+            border-right: 4px solid var(--primary-brown);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: var(--primary-green-dark);
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--primary-brown);
+            border-radius: 10px;
+        }
+
+        /* Sidebar Header */
+        .sidebar-header {
+            padding: 30px 25px 20px;
+            text-align: left;
+            border-bottom: 2px solid var(--primary-brown);
+            position: relative;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-header h2 {
+            font-family: var(--font-primary);
+            font-weight: 800;
+            font-size: 1.6rem;
+            line-height: 1.2;
+            color: var(--accent-white);
+            margin: 0 0 5px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sidebar-header h2 span {
+            color: var(--primary-brown-light);
+        }
+
+        .sidebar-header p {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            color: var(--primary-brown-light);
+            font-weight: 500;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar-menu {
+            padding: 20px 0;
+            flex: 1;
+        }
+
+        .sidebar-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu .nav-main {
+            margin-bottom: 20px;
+        }
+
+        .sidebar-menu .nav-main li {
+            margin: 2px 15px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .sidebar-menu .nav-main li a {
+            color: var(--accent-white);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .sidebar-menu .nav-main li a i {
+            width: 24px;
+            font-size: 1.3rem;
+            color: var(--primary-brown-light);
+            transition: var(--transition);
+        }
+
+        .sidebar-menu .nav-main li:hover {
+            background: rgba(139, 107, 77, 0.2);
+            transform: translateX(5px);
+        }
+
+        .sidebar-menu .nav-main li:hover a i {
+            color: var(--accent-white);
+        }
+
+        .sidebar-menu .nav-main li.active {
+            background: rgba(139, 107, 77, 0.3);
+            border-left: 3px solid var(--primary-brown);
+        }
+
+        .sidebar-menu .section-header {
+            padding: 20px 25px 5px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--primary-brown-light);
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        .sidebar-menu .nav-sub {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu .nav-sub li {
+            margin: 2px 15px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .sidebar-menu .nav-sub li a {
+            color: var(--accent-white);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 15px 10px 25px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .sidebar-menu .nav-sub li a i {
+            width: 20px;
+            font-size: 1.1rem;
+            color: var(--primary-brown-light);
+        }
+
+        .sidebar-menu .nav-sub li:hover {
+            background: rgba(139, 107, 77, 0.2);
+        }
+
+        .sidebar-menu .nav-sub li:hover a i {
+            color: var(--accent-white);
+        }
+
+        .sidebar-menu .nav-sub li.active {
+            background: rgba(139, 107, 77, 0.3);
+            border-left: 3px solid var(--primary-brown);
+        }
+
+        /* Sidebar Footer */
+        .sidebar-footer {
+            padding: 20px 25px;
+            border-top: 2px solid var(--primary-brown);
+            background: rgba(0, 0, 0, 0.2);
+            margin-top: auto;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-brown);
+        }
+
+        .user-info i {
+            font-size: 2rem;
+            color: var(--primary-brown-light);
+        }
+
+        .user-details {
+            overflow: hidden;
+        }
+
+        .user-details .user-name {
+            display: block;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--accent-white);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-details .user-role {
+            display: block;
+            font-size: 0.7rem;
+            color: var(--primary-brown-light);
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-logout {
+            width: 100%;
+            background: transparent;
+            color: var(--accent-white);
+            border: 1px solid var(--primary-brown);
+            padding: 12px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: var(--transition);
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-logout:hover {
+            background: var(--primary-brown);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 107, 77, 0.4);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 25px;
+            transition: var(--transition);
+            background-color: var(--accent-beige);
+            min-height: 100vh;
+        }
+
+        /* ==================== FULL SCREEN LOGIN PAGE ==================== */
+        .login-container {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-brown-dark) 100%);
+            padding: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            animation: gradientShift 15s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 8px, transparent 8px);
+            background-size: 50px 50px;
+            animation: movePattern 30s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes movePattern {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(50px, 50px) rotate(10deg); }
+        }
+
+        .login-container::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 30%),
+                        radial-gradient(circle at 80% 70%, rgba(139, 107, 77, 0.2) 0%, transparent 30%);
+            pointer-events: none;
+        }
+
+        .login-card {
+            background: var(--accent-offwhite);
+            border-radius: var(--border-radius-lg);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+            animation: slideUpScale 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            z-index: 10;
+            border: 1px solid var(--primary-brown-light);
+            backdrop-filter: blur(10px);
+            transform-origin: center;
+        }
+
+        @keyframes slideUpScale {
+            0% {
+                opacity: 0;
+                transform: translateY(50px) scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green-dark) 100%);
+            color: white;
+            padding: 50px 40px;
+            text-align: center;
+            position: relative;
+            border-bottom: 4px solid var(--primary-brown);
+            overflow: hidden;
+        }
+
+        .login-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .diskarteng-logo {
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-line1 {
+            font-family: var(--font-primary);
+            font-weight: 900;
+            font-size: 2.5rem;
+            line-height: 1;
+            color: var(--accent-white);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .logo-line1 .p { color: var(--primary-brown-light); }
+        .logo-line1 .i { color: var(--accent-white); }
+        .logo-line1 .s { color: var(--primary-brown-light); }
+        .logo-line1 .k { color: var(--accent-white); }
+        .logo-line1 .a { color: var(--primary-brown-light); }
+        .logo-line1 .r { color: var(--accent-white); }
+        .logo-line1 .t { color: var(--primary-brown-light); }
+        .logo-line1 .e { color: var(--accent-white); }
+        .logo-line1 .n { color: var(--primary-brown-light); }
+        .logo-line1 .g { color: var(--accent-white); }
+
+        .logo-line2 {
+            font-family: var(--font-primary);
+            font-weight: 900;
+            font-size: 2.5rem;
+            line-height: 1;
+            color: var(--accent-white);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .logo-line2 .p { color: var(--primary-brown-light); }
+        .logo-line2 .i { color: var(--accent-white); }
+        .logo-line2 .n { color: var(--primary-brown-light); }
+        .logo-line2 .o { color: var(--accent-white); }
+        .logo-line2 .y { color: var(--primary-brown-light); }
+
+        .logo-subtitle {
+            font-size: 0.8rem;
+            letter-spacing: 4px;
+            margin-top: 10px;
+            color: var(--primary-brown-light);
+            text-transform: uppercase;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px;
+            border-radius: var(--border-radius);
+        }
+
+        .login-header h2 {
+            margin: 15px 0 5px;
+            font-weight: 800;
+            font-size: 2.2rem;
+            color: var(--accent-white);
+            letter-spacing: 2px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .login-header p {
+            margin: 0;
+            opacity: 0.95;
+            color: var(--primary-brown-light);
+            font-weight: 500;
+            letter-spacing: 4px;
+            font-size: 1rem;
+            position: relative;
+            z-index: 2;
+            text-transform: uppercase;
+        }
+
+        .login-body {
+            padding: 50px 40px;
+            background: var(--accent-offwhite);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            animation: fadeInRight 0.5s ease;
+            animation-fill-mode: both;
+        }
+
+        .form-group:nth-child(1) { animation-delay: 0.2s; }
+        .form-group:nth-child(2) { animation-delay: 0.3s; }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--primary-green-dark);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-group label i {
+            color: var(--primary-brown);
+            margin-right: 8px;
+            font-size: 1rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid var(--accent-beige);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            background: var(--accent-white);
+            color: var(--text-dark);
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 4px rgba(45, 90, 39, 0.1);
+            outline: none;
+        }
+
+        .form-group input::placeholder {
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+        .btn-login {
+            width: 100%;
+            background: linear-gradient(90deg, var(--primary-brown) 0%, var(--primary-brown-dark) 100%);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: var(--border-radius);
+            font-weight: 700;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            transition: var(--transition);
+            cursor: pointer;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.5s ease 0.4s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(139, 107, 77, 0.4);
+            background: linear-gradient(90deg, var(--primary-brown-dark) 0%, var(--primary-brown) 100%);
+        }
+
+        .btn-login:hover::before {
+            left: 100%;
+        }
+
+        .btn-login i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .login-footer {
+            background: var(--accent-cream);
+            padding: 25px 40px;
+            text-align: center;
+            color: var(--text-brown);
+            border-top: 2px solid var(--primary-brown-light);
+            font-size: 0.95rem;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary-brown-light), transparent);
+        }
+
+        .login-footer i {
+            color: var(--primary-brown);
+            margin: 0 5px;
+            animation: heartBeat 1.5s ease infinite;
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* ==================== DASHBOARD STYLES ==================== */
+        .dashboard-header {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dashboard-header h1 {
+            font-weight: 700;
+            color: var(--primary-green-dark);
+            position: relative;
+            display: inline-block;
+            font-size: 2.2rem;
+            margin: 0;
+        }
+
+        .dashboard-header h1::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: var(--primary-brown);
+            border-radius: 2px;
+        }
+
+        .date-display {
+            background: var(--accent-white);
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-brown-light);
+            color: var(--text-brown);
+            font-weight: 500;
+            box-shadow: var(--box-shadow);
+        }
+
+        .date-display i {
+            color: var(--primary-brown);
+            margin-right: 8px;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--accent-offwhite);
+            border-radius: var(--border-radius-lg);
+            padding: 25px;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            border-left: 4px solid var(--primary-brown);
+            border-top: 1px solid var(--primary-brown-light);
+            border-right: 1px solid var(--primary-brown-light);
+            border-bottom: 1px solid var(--primary-brown-light);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--box-shadow-hover);
+            border-left: 4px solid var(--primary-green);
+        }
+
+        .stat-card .stat-label {
+            color: var(--text-brown);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-green-dark);
+            margin-bottom: 5px;
+        }
+
+        .stat-card .stat-footer {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .stat-card .stat-footer i {
+            color: var(--primary-brown);
+        }
+
+        .charts-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: var(--accent-offwhite);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--box-shadow);
+            border: 1px solid var(--primary-brown-light);
+            overflow: hidden;
+        }
+
+        .chart-header {
+            background: linear-gradient(90deg, var(--accent-cream) 0%, var(--accent-offwhite) 100%);
+            border-bottom: 2px solid var(--primary-brown-light);
+            padding: 20px 25px;
+        }
+
+        .chart-header h3 {
+            font-weight: 700;
+            color: var(--primary-green-dark);
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .chart-header h3 i {
+            color: var(--primary-brown);
+            margin-right: 8px;
+        }
+
+        .chart-body {
+            padding: 25px;
+            background: var(--accent-white);
+            min-height: 250px;
+        }
+
+        .tables-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .table-card {
+            background: var(--accent-offwhite);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--box-shadow);
+            border: 1px solid var(--primary-brown-light);
+            overflow: hidden;
+        }
+
+        .table-header {
+            background: linear-gradient(90deg, var(--accent-cream) 0%, var(--accent-offwhite) 100%);
+            border-bottom: 2px solid var(--primary-brown-light);
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header h3 {
+            font-weight: 700;
+            color: var(--primary-green-dark);
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .table-header h3 i {
+            color: var(--primary-brown);
+            margin-right: 8px;
+        }
+
+        .table-header .view-all {
+            color: var(--primary-brown);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .table-header .view-all:hover {
+            color: var(--primary-green);
+            transform: translateX(5px);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .low-stock-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .low-stock-table th {
+            background: var(--accent-beige);
+            color: var(--primary-green-dark);
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 15px;
+            text-align: left;
+            border-bottom: 2px solid var(--primary-brown);
+        }
+
+        .low-stock-table td {
+            padding: 15px;
+            border-bottom: 1px solid var(--accent-beige);
+            color: var(--text-dark);
+        }
+
+        .low-stock-table tr:hover {
+            background: rgba(139, 107, 77, 0.05);
+        }
+
+        .activity-timeline {
+            padding: 0;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 15px 25px;
+            border-bottom: 1px solid var(--accent-beige);
+            transition: var(--transition);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-item:hover {
+            background: rgba(139, 107, 77, 0.05);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-green);
+            border: 2px solid var(--primary-brown-light);
+            color: white;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-content p {
+            margin: 0 0 5px;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .activity-content p strong {
+            color: var(--primary-green-dark);
+        }
+
+        .activity-time {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .activity-time i {
+            color: var(--primary-brown);
+            font-size: 0.7rem;
+        }
+
+        /* ==================== RESPONSIVE DESIGN ==================== */
+        @media (max-width: 1200px) {
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .charts-row,
+            .tables-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                margin-left: calc(-1 * var(--sidebar-width));
+            }
+            .sidebar.active {
+                margin-left: 0;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+            }
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+            .login-header {
+                padding: 40px 30px;
+            }
+            .login-header .logo-line1,
+            .login-header .logo-line2 {
+                font-size: 2rem;
+            }
+            .login-header h2 {
+                font-size: 1.8rem;
+            }
+            .login-header p {
+                letter-spacing: 2px;
+                font-size: 0.9rem;
+            }
+            .login-body {
+                padding: 40px 30px;
+            }
+            .login-footer {
+                padding: 20px 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                max-width: 90%;
+            }
+            .login-header .logo-line1,
+            .login-header .logo-line2 {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* ==================== UTILITY CLASSES ==================== */
+        .text-green {
+            color: var(--primary-green);
+        }
+        .text-brown {
+            color: var(--primary-brown);
+        }
+        .bg-cream {
+            background-color: var(--accent-cream);
+        }
+        .bg-beige {
+            background-color: var(--accent-beige);
+        }
+        .border-brown {
+            border: 1px solid var(--primary-brown-light);
+        }
+    </style>
 </head>
 <body>
     <div class="wrapper">
         <!-- Sidebar -->
-{% if user.is_authenticated %}
-<nav class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-        <h2>Diskarte <span>Pinoy TV</span></h2>
-        <p> Inventory System</p>
-    </div>
-    
-    <div class="sidebar-menu">
-        <!-- Main Navigation -->
-        <ul class="nav-main">
-            <li class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-                <a href="{% url 'dashboard' %}">
-                    <i class="bi bi-speedometer2"></i>
-                    <span>Dashboard</span>
-                </a>
-            </li>
-            
-            <li class="{% if request.resolver_match.url_name == 'product_list' %}active{% endif %}">
-                <a href="{% url 'product_list' %}">
-                    <i class="bi bi-box-seam"></i>
-                    <span>Inventory</span>
-                </a>
-            </li>
-        </ul>
-        
-        <!-- STOCK MANAGEMENT Section -->
-        <div class="section-header">STOCK MANAGEMENT</div>
-        <ul class="nav-sub">
-          
-            
-            <li class="{% if request.resolver_match.url_name == 'stock_out' %}active{% endif %}">
-                <a href="{% url 'stock_out' %}">
-                    <i class="bi bi-arrow-up-circle"></i>
-                    <span>Stock Out</span>
-                </a>
-            </li>
-        </ul>
-        
-      <!-- REPORTS Section -->
-<div class="section-header">REPORTS</div>
-<ul class="nav-sub">
-    <li class="{% if request.resolver_match.url_name == 'inventory_report' %}active{% endif %}">
-        <a href="{% url 'inventory_report' %}">
-            <i class="bi bi-file-text"></i>
-            <span>Inventory Report</span>
-        </a>
-    </li>
-    
-    <li class="{% if request.resolver_match.url_name == 'stock_out_report' %}active{% endif %}">
-        <a href="{% url 'stock_out_report' %}">
-            <i class="bi bi-cash-stack"></i>
-            <span>Stock Out Value</span>
-        </a>
-    </li>
-    
-    <li class="{% if request.resolver_match.url_name == 'activity_log' %}active{% endif %}">
-        <a href="{% url 'activity_log' %}">
-            <i class="bi bi-clock-history"></i>
-            <span>Activity Log</span>
-        </a>
-    </li>
-</ul>
-    
-    <!-- Sidebar Footer with User Info -->
-    <div class="sidebar-footer">
-        <div class="user-info">
-            <i class="bi bi-person-circle"></i>
-            <div class="user-details">
-                <span class="user-name">{{ user.username }}</span>
-                <span class="user-role">Administrator</span>
+        {% if user.is_authenticated %}
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Diskarteng <span>Pinoy</span></h2>
+                <p>TV Inventory System</p>
             </div>
-        </div>
-        <a href="{% url 'logout' %}" class="btn-logout">
-            <i class="bi bi-box-arrow-right"></i> Logout
-        </a>
-    </div>
-</nav>
-{% endif %}
+            
+            <div class="sidebar-menu">
+                <ul class="nav-main">
+                    <li class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                        <a href="{% url 'dashboard' %}">
+                            <i class="bi bi-speedometer2"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="{% if request.resolver_match.url_name == 'product_list' %}active{% endif %}">
+                        <a href="{% url 'product_list' %}">
+                            <i class="bi bi-box-seam"></i>
+                            <span>Inventory</span>
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="section-header">STOCK MANAGEMENT</div>
+                <ul class="nav-sub">
+                    <li class="{% if request.resolver_match.url_name == 'stock_out' %}active{% endif %}">
+                        <a href="{% url 'stock_out' %}">
+                            <i class="bi bi-arrow-up-circle"></i>
+                            <span>Stock Out</span>
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="section-header">REPORTS</div>
+                <ul class="nav-sub">
+                    <li class="{% if request.resolver_match.url_name == 'inventory_report' %}active{% endif %}">
+                        <a href="{% url 'inventory_report' %}">
+                            <i class="bi bi-file-text"></i>
+                            <span>Inventory Report</span>
+                        </a>
+                    </li>
+                    <li class="{% if request.resolver_match.url_name == 'stock_out_report' %}active{% endif %}">
+                        <a href="{% url 'stock_out_report' %}">
+                            <i class="bi bi-cash-stack"></i>
+                            <span>Stock Out Value</span>
+                        </a>
+                    </li>
+                    <li class="{% if request.resolver_match.url_name == 'activity_log' %}active{% endif %}">
+                        <a href="{% url 'activity_log' %}">
+                            <i class="bi bi-clock-history"></i>
+                            <span>Activity Log</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <i class="bi bi-person-circle"></i>
+                    <div class="user-details">
+                        <span class="user-name">{{ user.username }}</span>
+                        <span class="user-role">Administrator</span>
+                    </div>
+                </div>
+                <a href="{% url 'logout' %}" class="btn-logout">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
+            </div>
+        </nav>
+        {% endif %}
 
         <!-- Main Content -->
         <div class="main-content" id="main-content">
-            <!-- Top Navigation for Mobile -->
-            {% if user.is_authenticated %}
-            <nav class="navbar navbar-mobile">
-                <div class="container-fluid">
-                    <button class="btn btn-toggle-sidebar" type="button">
-                        <i class="bi bi-list"></i>
-                    </button>
-                    <span class="navbar-brand">Diskarte Pinoy TV</span>
-                    <div class="dropdown">
-                        <button class="btn btn-user-dropdown" type="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle"></i>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><span class="dropdown-item-text">{{ user.username }}</span></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-            {% endif %}
-
             <!-- Messages/Alerts -->
             {% if messages %}
             <div class="container-fluid mt-3">
@@ -151,7 +1105,29 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- Custom JS -->
-    <script src="{% static 'js/main.js' %}"></script>
+    <script>
+        // Wait for DOM to load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-hide alerts after 5 seconds
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                setTimeout(function() {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }, 5000);
+            });
+            
+            // Confirm delete actions
+            const deleteButtons = document.querySelectorAll('.btn-delete-confirm');
+            deleteButtons.forEach(function(button) {
+                button.addEventListener('click', function(e) {
+                    if (!confirm('Are you sure you want to delete this item? This action cannot be undone.')) {
+                        e.preventDefault();
+                    }
+                });
+            });
+        });
+    </script>
     
     {% block extra_js %}{% endblock %}
 </body>

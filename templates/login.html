@@ -7,9 +7,9 @@
 <div class="login-container">
     <div class="login-card">
         <div class="login-header">
-            <div class="diskarte-logo">
+            <div class="diskarteng-logo">
                 <div class="logo-line1">
-                    <span class="d">D</span>
+                    <span class="p">P</span>
                     <span class="i">I</span>
                     <span class="s">S</span>
                     <span class="k">K</span>
@@ -42,9 +42,7 @@
                     </label>
                     {% render_field form.username class="form-control" placeholder="Enter your username" %}
                     {% if form.username.errors %}
-                        <div class="text-danger mt-1">
-                            {{ form.username.errors }}
-                        </div>
+                        <div class="text-danger mt-1">{{ form.username.errors }}</div>
                     {% endif %}
                 </div>
                 
@@ -54,9 +52,7 @@
                     </label>
                     {% render_field form.password class="form-control" placeholder="Enter your password" %}
                     {% if form.password.errors %}
-                        <div class="text-danger mt-1">
-                            {{ form.password.errors }}
-                        </div>
+                        <div class="text-danger mt-1">{{ form.password.errors }}</div>
                     {% endif %}
                 </div>
                 
@@ -68,7 +64,7 @@
         
         <div class="login-footer">
             <p><i class="bi bi-shield-lock-fill"></i> Authorized Personnel Only <i class="bi bi-shield-lock-fill"></i></p>
-            <small>&copy; 2026 Diskarte Pinoy TV. All rights reserved.</small>
+            <small>© 2026 Diskarte Pinoy TV. All rights reserved.</small>
         </div>
     </div>
 </div>
