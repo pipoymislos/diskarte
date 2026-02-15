@@ -24,6 +24,7 @@ if __name__ == '__main__':
 import os
 import sys
 
+
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'inventory_system.settings')
@@ -37,6 +38,6 @@ def main():
         ) from exc
     execute_from_command_line(sys.argv)
 
+
 if __name__ == '__main__':
->>>>>>> 634131f0d28304ffc716afc7bc8862b73380b9a2
     main()
