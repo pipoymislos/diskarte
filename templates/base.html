@@ -1,0 +1,158 @@
+ 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diskarte Pinoy TV - {% block title %}Inventory System{% endblock %}</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <!-- Custom CSS -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar -->
+{% if user.is_authenticated %}
+<nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <h2>Diskarte <span>Pinoy TV</span></h2>
+        <p> Inventory System</p>
+    </div>
+    
+    <div class="sidebar-menu">
+        <!-- Main Navigation -->
+        <ul class="nav-main">
+            <li class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                <a href="{% url 'dashboard' %}">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            
+            <li class="{% if request.resolver_match.url_name == 'product_list' %}active{% endif %}">
+                <a href="{% url 'product_list' %}">
+                    <i class="bi bi-box-seam"></i>
+                    <span>Inventory</span>
+                </a>
+            </li>
+        </ul>
+        
+        <!-- STOCK MANAGEMENT Section -->
+        <div class="section-header">STOCK MANAGEMENT</div>
+        <ul class="nav-sub">
+          
+            
+            <li class="{% if request.resolver_match.url_name == 'stock_out' %}active{% endif %}">
+                <a href="{% url 'stock_out' %}">
+                    <i class="bi bi-arrow-up-circle"></i>
+                    <span>Stock Out</span>
+                </a>
+            </li>
+        </ul>
+        
+      <!-- REPORTS Section -->
+<div class="section-header">REPORTS</div>
+<ul class="nav-sub">
+    <li class="{% if request.resolver_match.url_name == 'inventory_report' %}active{% endif %}">
+        <a href="{% url 'inventory_report' %}">
+            <i class="bi bi-file-text"></i>
+            <span>Inventory Report</span>
+        </a>
+    </li>
+    
+    <li class="{% if request.resolver_match.url_name == 'stock_out_report' %}active{% endif %}">
+        <a href="{% url 'stock_out_report' %}">
+            <i class="bi bi-cash-stack"></i>
+            <span>Stock Out Value</span>
+        </a>
+    </li>
+    
+    <li class="{% if request.resolver_match.url_name == 'activity_log' %}active{% endif %}">
+        <a href="{% url 'activity_log' %}">
+            <i class="bi bi-clock-history"></i>
+            <span>Activity Log</span>
+        </a>
+    </li>
+</ul>
+    
+    <!-- Sidebar Footer with User Info -->
+    <div class="sidebar-footer">
+        <div class="user-info">
+            <i class="bi bi-person-circle"></i>
+            <div class="user-details">
+                <span class="user-name">{{ user.username }}</span>
+                <span class="user-role">Administrator</span>
+            </div>
+        </div>
+        <a href="{% url 'logout' %}" class="btn-logout">
+            <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+    </div>
+</nav>
+{% endif %}
+
+        <!-- Main Content -->
+        <div class="main-content" id="main-content">
+            <!-- Top Navigation for Mobile -->
+            {% if user.is_authenticated %}
+            <nav class="navbar navbar-mobile">
+                <div class="container-fluid">
+                    <button class="btn btn-toggle-sidebar" type="button">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <span class="navbar-brand">Diskarte Pinoy TV</span>
+                    <div class="dropdown">
+                        <button class="btn btn-user-dropdown" type="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><span class="dropdown-item-text">{{ user.username }}</span></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            {% endif %}
+
+            <!-- Messages/Alerts -->
+            {% if messages %}
+            <div class="container-fluid mt-3">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Page Content -->
+            <div class="container-fluid py-4">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="{% static 'js/main.js' %}"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

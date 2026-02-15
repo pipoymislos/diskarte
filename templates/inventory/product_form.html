@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="product-form-page">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">{{ title }}</h1>
+        <a href="{% url 'product_list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Inventory
+        </a>
+    </div>
+    
+    <!-- Form Card -->
+    <div class="card">
+        <div class="card-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.name.id_for_label }}" class="form-label">
+                            Product Name <span class="text-danger">*</span>
+                        </label>
+                        {% render_field form.name class="form-control" %}
+                        {% if form.name.errors %}
+                            <div class="text-danger mt-1 small">{{ form.name.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.sku.id_for_label }}" class="form-label">
+                            SKU <span class="text-danger">*</span>
+                        </label>
+                        {% render_field form.sku class="form-control" %}
+                        {% if form.sku.errors %}
+                            <div class="text-danger mt-1 small">{{ form.sku.errors }}</div>
+                        {% endif %}
+                        <div class="form-text">Unique product identifier</div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.category.id_for_label }}" class="form-label">Category</label>
+                        {% render_field form.category class="form-select" %}
+                        {% if form.category.errors %}
+                            <div class="text-danger mt-1 small">{{ form.category.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.unit.id_for_label }}" class="form-label">Unit</label>
+                        {% render_field form.unit class="form-select" %}
+                        {% if form.unit.errors %}
+                            <div class="text-danger mt-1 small">{{ form.unit.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+                    {% render_field form.description class="form-control" rows="3" %}
+                    {% if form.description.errors %}
+                        <div class="text-danger mt-1 small">{{ form.description.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="{{ form.quantity.id_for_label }}" class="form-label">Initial Quantity</label>
+                        {% render_field form.quantity class="form-control" %}
+                        {% if form.quantity.errors %}
+                            <div class="text-danger mt-1 small">{{ form.quantity.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label for="{{ form.reorder_level.id_for_label }}" class="form-label">Reorder Level</label>
+                        {% render_field form.reorder_level class="form-control" %}
+                        {% if form.reorder_level.errors %}
+                            <div class="text-danger mt-1 small">{{ form.reorder_level.errors }}</div>
+                        {% endif %}
+                        <div class="form-text">Alert when stock reaches this level</div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label for="{{ form.price.id_for_label }}" class="form-label">Price (₱)</label>
+                        {% render_field form.price class="form-control" %}
+                        {% if form.price.errors %}
+                            <div class="text-danger mt-1 small">{{ form.price.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <hr class="my-4">
+                
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="{% url 'product_list' %}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Save Product
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

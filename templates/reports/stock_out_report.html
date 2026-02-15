@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+
+{% block title %}Stock Out Value Report{% endblock %}
+
+{% block content %}
+<div class="stockout-report-page">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Stock Out Value Report</h1>
+        <button onclick="window.print()" class="btn btn-primary">
+            <i class="bi bi-printer"></i> Print Report
+        </button>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Date From</label>
+                    <input type="date" name="date_from" class="form-control" value="{{ date_from }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Date To</label>
+                    <input type="date" name="date_to" class="form-control" value="{{ date_to }}">
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-funnel"></i> Apply Filter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="card bg-danger text-white">
+                <div class="card-body">
+                    <h6 class="card-title">Total Items Stock Out</h6>
+                    <h2 class="mb-0">{{ total_quantity }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h6 class="card-title">Total Value Stock Out</h6>
+                    <h2 class="mb-0">₱{{ total_value|floatformat:2 }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Summary by Product</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>Product</th>
+                            <th>SKU</th>
+                            <th>Total Quantity</th>
+                            <th>Total Value (₱)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in product_summary %}
+                        <tr>
+                            <td class="fw-bold">{{ item.name }}</td>
+                            <td><code>{{ item.sku }}</code></td>
+                            <td>{{ item.quantity }}</td>
+                            <td class="text-end text-danger fw-bold">₱{{ item.value|floatformat:2 }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-4 text-muted">
+                                No stock out records found
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot class="table-light">
+                        <tr>
+                            <th colspan="2" class="text-end">TOTAL:</th>
+                            <th>{{ total_quantity }}</th>
+                            <th class="text-end text-danger">₱{{ total_value|floatformat:2 }}</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Detailed Stock Out Transactions</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>Date</th>
+                            <th>Product</th>
+                            <th>SKU</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Total Value</th>
+                            <th>Reference</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for movement in stock_outs %}
+                        <tr>
+                            <td>{{ movement.date|date:"M d, Y h:i A" }}</td>
+                            <td class="fw-bold">{{ movement.product.name }}</td>
+                            <td><code>{{ movement.product.sku }}</code></td>
+                            <td>{{ movement.quantity }} {{ movement.product.unit }}</td>
+                            <td class="text-end">₱{{ movement.price_at_movement|floatformat:2 }}</td>
+                            <td class="text-end text-danger fw-bold">₱{{ movement.total_value|floatformat:2 }}</td>
+                            <td>{{ movement.reference|default:"--" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center py-4 text-muted">
+                                No stock out records found
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@media print {
+    .sidebar, .navbar-mobile, .btn, .card-header .btn, form {
+        display: none !important;
+    }
+    .main-content {
+        margin-left: 0 !important;
+        padding: 10px !important;
+        width: 100% !important;
+    }
+    .table th, .table td {
+        border: 1px solid #000 !important;
+        padding: 5px !important;
+    }
+    .text-danger {
+        color: #000 !important;
+        font-weight: bold !important;
+    }
+    @page {
+        size: landscape;
+        margin: 1cm;
+        @top-center {
+            content: "DISKARTENG PINOY TV - STOCK OUT VALUE REPORT";
+            font-weight: bold;
+        }
+    }
+}
+</style>
+{% endblock %}

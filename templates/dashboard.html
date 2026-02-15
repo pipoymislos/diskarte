@@ -1,0 +1,263 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <!-- Page Header -->
+    <div class="dashboard-header">
+        <h1>Dashboard</h1>
+        <div class="date-display">
+            <i class="bi bi-calendar3"></i> {% now "F j, Y" %}
+        </div>
+    </div>
+    
+    <!-- Statistics Row -->
+     
+    <div class="stats-row">
+        <div class="stat-card">
+        
+            <div class="stat-label">Total Products</div>
+            <div class="stat-value">{{ total_products }}</div>
+            <div class="stat-footer">
+                <i class="bi bi-box-seam"></i> All inventory items
+            </div>
+        </div>
+
+        <div class="stat-card">
+        <div class="stat-label">Total Inventory Value</div>
+        <div class="stat-value">₱{{ total_stock_value|floatformat:2 }}</div>
+        <div class="stat-footer">
+            <i class="bi bi-currency-dollar"></i> Total investment
+        </div>
+    </div>
+
+        
+        <div class="stat-card">
+            <div class="stat-label">Low Stock Items</div>
+            <div class="stat-value">{{ low_stock_products }}</div>
+            <div class="stat-footer">
+                <i class="bi bi-exclamation-triangle"></i> Needs attention
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-label">Out of Stock</div>
+            <div class="stat-value">{{ out_of_stock|default:"0" }}</div>
+            <div class="stat-footer">
+                <i class="bi bi-x-circle"></i> Reorder immediately
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-label">Total Value</div>
+            <div class="stat-value">₱{{ total_stock_value|floatformat:0 }}</div>
+            <div class="stat-footer">
+                <i class="bi bi-currency-dollar"></i> Inventory worth
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts Row -->
+    <div class="charts-row">
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3><i class="bi bi-graph-up"></i> Stock Movement (Last 7 Days)</h3>
+            </div>
+            <div class="chart-body">
+                <canvas id="stockMovementChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3><i class="bi bi-pie-chart"></i> Stock Status</h3>
+            </div>
+            <div class="chart-body">
+                <canvas id="stockStatusChart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tables Row -->
+    <div class="tables-row">
+        <!-- Low Stock Alerts Table -->
+        <div class="table-card">
+            <div class="table-header">
+                <h3><i class="bi bi-exclamation-triangle"></i> Low Stock Alerts</h3>
+                <a href="{% url 'product_list' %}?stock_status=low" class="view-all">
+                    View All <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table class="low-stock-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>SKU</th>
+                            <th>Current Stock</th>
+                            <th>Reorder Level</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in low_stock_items %}
+                        <tr>
+                            <td class="product-name">
+                                <a href="{% url 'product_detail' product.id %}" style="text-decoration: none; color: inherit;">
+                                    {{ product.name }}
+                                </a>
+                            </td>
+                            <td class="sku">{{ product.sku }}</td>
+                            <td class="stock-level {% if product.quantity == 0 %}critical{% elif product.quantity <= product.reorder_level %}warning{% else %}normal{% endif %}">
+                                {{ product.quantity }} {{ product.unit }}
+                            </td>
+                            <td>{{ product.reorder_level }} {{ product.unit }}</td>
+                            <td>
+                                {% if product.quantity == 0 %}
+                                    <span class="status-badge out">Out of Stock</span>
+                                {% elif product.quantity <= product.reorder_level %}
+                                    <span class="status-badge low">Low Stock</span>
+                                {% else %}
+                                    <span class="status-badge in">In Stock</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                                <i class="bi bi-check-circle" style="font-size: 2rem; display: block; margin-bottom: 10px;"></i>
+                                No low stock items
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Recent Activities Table -->
+        <div class="table-card">
+            <div class="table-header">
+                <h3><i class="bi bi-clock-history"></i> Recent Activities</h3>
+                <a href="{% url 'activity_log' %}" class="view-all">
+                    View All <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+            <div class="activity-timeline">
+                {% for activity in recent_activities %}
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        {% if activity.action == 'LOGIN' %}
+                            <i class="bi bi-box-arrow-in-right"></i>
+                        {% elif activity.action == 'CREATE' %}
+                            <i class="bi bi-plus-circle"></i>
+                        {% elif activity.action == 'UPDATE' %}
+                            <i class="bi bi-pencil"></i>
+                        {% elif activity.action == 'DELETE' %}
+                            <i class="bi bi-trash"></i>
+                        {% elif activity.action == 'STOCK_IN' %}
+                            <i class="bi bi-arrow-down-circle"></i>
+                        {% elif activity.action == 'STOCK_OUT' %}
+                            <i class="bi bi-arrow-up-circle"></i>
+                        {% else %}
+                            <i class="bi bi-clock"></i>
+                        {% endif %}
+                    </div>
+                    <div class="activity-content">
+                        <p>
+                            <strong>{{ activity.user.username }}</strong>
+                            {{ activity.action|title }}
+                            {% if activity.action == 'LOGIN' %}
+                                user "{{ activity.object_repr }}"
+                            {% elif activity.model_name %}
+                                {{ activity.model_name|lower }} "{{ activity.object_repr }}"
+                            {% endif %}
+                        </p>
+                        <div class="activity-time">
+                            <i class="bi bi-clock"></i> {{ activity.timestamp|timesince }} ago
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                    <i class="bi bi-clock" style="font-size: 2rem; display: block; margin-bottom: 10px;"></i>
+                    No recent activities
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Stock Movement Chart
+    const ctx1 = document.getElementById('stockMovementChart').getContext('2d');
+    new Chart(ctx1, {
+        type: 'line',
+        data: {
+            labels: {{ chart_labels|safe }},
+            datasets: [
+                {
+                    label: 'Stock In',
+                    data: {{ stock_in_data|safe }},
+                    borderColor: '#2D5A27',
+                    backgroundColor: 'rgba(45, 90, 39, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                },
+                {
+                    label: 'Stock Out',
+                    data: {{ stock_out_data|safe }},
+                    borderColor: '#8B6B4D',
+                    backgroundColor: 'rgba(139, 107, 77, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+    
+    // Stock Status Chart
+    const ctx2 = document.getElementById('stockStatusChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+            labels: ['In Stock', 'Low Stock', 'Out of Stock'],
+            datasets: [{
+                data: [
+                    {{ total_products }} - {{ low_stock_products }} - {{ out_of_stock|default:0 }},
+                    {{ low_stock_products }},
+                    {{ out_of_stock|default:0 }}
+                ],
+                backgroundColor: ['#2D5A27', '#8B6B4D', '#5A4530'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            },
+            cutout: '60%'
+        }
+    });
+});
+</script>
+{% endblock %}

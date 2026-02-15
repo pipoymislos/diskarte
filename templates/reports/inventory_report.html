@@ -1,0 +1,290 @@
+{% extends 'base.html' %}
+
+{% block title %}Inventory Report{% endblock %}
+
+{% block content %}
+<div class="inventory-report-page">
+    <!-- Page Header with Print Button -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Inventory Report</h1>
+        <button onclick="window.print()" class="btn btn-primary">
+            <i class="bi bi-printer"></i> Print Report
+        </button>
+    </div>
+    
+    <!-- Summary Cards with Total Value -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h6 class="card-title">Total Products</h6>
+                    <h2 class="mb-0">{{ products.count }}</h2>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h6 class="card-title">Total Items in Stock</h6>
+                    <h2 class="mb-0">{{ total_items }}</h2>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h6 class="card-title">Total Inventory Value</h6>
+                    <h2 class="mb-0">₱{{ total_value|floatformat:2 }}</h2>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h6 class="card-title">Average Item Value</h6>
+                    <h2 class="mb-0">₱{% widthratio total_value total_items 1 %}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Category Summary with Values -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Category Summary</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Category</th>
+                            <th>Number of Products</th>
+                            <th>Total Quantity</th>
+                            <th>Total Value (₱)</th>
+                            <th>% of Total Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for summary in category_summary %}
+                        <tr>
+                            <td><strong>{{ summary.category.name }}</strong></td>
+                            <td>{{ summary.product_count }}</td>
+                            <td>{{ summary.total_quantity }}</td>
+                            <td class="text-end fw-bold">₱{{ summary.total_value|floatformat:2 }}</td>
+                            <td>
+                                {% if total_value > 0 %}
+                                    {{ summary.total_value|floatformat:2|add:total_value|floatformat:1 }}%
+                                {% else %}
+                                    0%
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">No categories found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot class="table-light">
+                        <tr>
+                            <th>Total</th>
+                            <th>{{ products.count }}</th>
+                            <th>{{ total_items }}</th>
+                            <th class="text-end">₱{{ total_value|floatformat:2 }}</th>
+                            <th>100%</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Detailed Inventory List with Individual Values -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Detailed Inventory List</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>Product</th>
+                            <th>SKU</th>
+                            <th>Category</th>
+                            <th>Unit</th>
+                            <th>Quantity</th>
+                            <th>Unit Price (₱)</th>
+                            <th>Total Value (₱)</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                        <tr>
+                            <td>
+                                <span class="fw-bold">{{ product.name }}</span>
+                                {% if product.description %}
+                                <br>
+                                <small class="text-muted">{{ product.description|truncatechars:30 }}</small>
+                                {% endif %}
+                            </td>
+                            <td><code>{{ product.sku }}</code></td>
+                            <td>
+                                {% if product.category %}
+                                <span class="badge bg-info">{{ product.category.name }}</span>
+                                {% else %}
+                                <span class="badge bg-secondary">Uncategorized</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ product.get_unit_display }}</td>
+                            <td class="fw-bold {% if product.quantity <= product.reorder_level %}text-warning{% endif %}">
+                                {{ product.quantity }}
+                            </td>
+                            <td class="text-end">₱{{ product.price|floatformat:2 }}</td>
+                            <td class="text-end fw-bold text-success">₱{{ product.quantity|floatformat:2|add:product.price }}</td>
+                            <td>
+                                {% if product.quantity <= 0 %}
+                                    <span class="badge bg-danger">Out of Stock</span>
+                                {% elif product.quantity <= product.reorder_level %}
+                                    <span class="badge bg-warning">Low Stock</span>
+                                {% else %}
+                                    <span class="badge bg-success">In Stock</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center py-5">
+                                <i class="bi bi-box display-1 text-muted"></i>
+                                <p class="mt-3 text-muted">No products found</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot class="table-light">
+                        <tr>
+                            <th colspan="6" class="text-end">GRAND TOTAL:</th>
+                            <th class="text-end text-success">₱{{ total_value|floatformat:2 }}</th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer with Date and Total in Words -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <p class="text-muted">
+                <i class="bi bi-calendar"></i> Report Generated: {% now "F j, Y h:i A" %}
+            </p>
+        </div>
+        <div class="col-md-6 text-end">
+            <p class="fw-bold text-success">
+                Total Inventory Value: ₱{{ total_value|floatformat:2 }}
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Print Styles para lumabas ng maayos sa papel -->
+<style>
+@media print {
+    /* Itago ang mga elements na hindi dapat lumabas sa print */
+    .sidebar, .navbar-mobile, .btn, .card-header .btn, .top-navbar {
+        display: none !important;
+    }
+    
+    .main-content {
+        margin-left: 0 !important;
+        padding: 10px !important;
+        width: 100% !important;
+    }
+    
+    /* Siguraduhing kita ang lahat ng tables */
+    .table {
+        border-collapse: collapse !important;
+        width: 100% !important;
+    }
+    
+    .table th, .table td {
+        border: 1px solid #ddd !important;
+        padding: 8px !important;
+    }
+    
+    .table thead th {
+        background-color: #f2f2f2 !important;
+        color: black !important;
+    }
+    
+    /* I-highlight ang total values */
+    .text-success {
+        color: #2D5A27 !important;
+        font-weight: bold !important;
+    }
+    
+    /* Siguraduhing kita ang grand total */
+    tfoot th, tfoot td {
+        background-color: #f9f9f9 !important;
+        border-top: 2px solid #000 !important;
+    }
+    
+    /* Add watermark or header sa print */
+    @page {
+        size: landscape;
+        margin: 1.5cm;
+        
+        @top-center {
+            content: "Diskarteng Pinoy TV - Inventory Report";
+            font-weight: bold;
+        }
+        
+        @bottom-center {
+            content: "Page " counter(page) " of " counter(pages);
+            font-size: 9pt;
+        }
+    }
+    
+    /* Summary cards sa print */
+    .card {
+        border: 1px solid #000 !important;
+        break-inside: avoid;
+        page-break-inside: avoid;
+        margin-bottom: 15px !important;
+    }
+    
+    .bg-primary, .bg-success, .bg-info, .bg-warning {
+        background-color: #f0f0f0 !important;
+        color: black !important;
+    }
+    
+    /* Siguraduhing hindi mapuputol ang tables */
+    .table-responsive {
+        overflow: visible !important;
+    }
+    
+    table {
+        page-break-inside: auto;
+    }
+    
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+    
+    thead {
+        display: table-header-group;
+    }
+    
+    tfoot {
+        display: table-footer-group;
+    }
+}
+</style>
+{% endblock %}
